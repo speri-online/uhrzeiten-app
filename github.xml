@@ -1,0 +1,7 @@
+<application>
+  <component name="GithubAccounts">
+    <account id="3b2820c0-6cd8-4bc3-a691-f8587c9c6dbb" name="speri-online">
+      <server host="github.com" />
+    </account>
+  </component>
+</application>
