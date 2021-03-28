@@ -1,0 +1,130 @@
+import kivy
+from kivy.app import App
+from kivy.properties import ObjectProperty
+from kivy.uix.label import Label
+from kivy.uix.gridlayout import GridLayout
+from kivy.uix.floatlayout import FloatLayout
+from kivy.uix.boxlayout import BoxLayout
+from kivy.lang import Builder
+Builder.load_file("uhrzeitenappneu.kv")
+
+
+class MainWindow(BoxLayout):
+
+    btn_halb = ObjectProperty(None)
+    btn_convert: ObjectProperty(None)
+
+    #Sobald und solang das user_dict mit Werten außer "None" gefüllt ist soll kontinuerlich kovertiert werden,
+    #sodass bei Neueingabe eines der drei Werte gleich aktualisiert wird.
+
+
+    global rewrite_user_dict
+    def rewrite_user_dict(self,x):
+        #print(user_dict)
+        #print(result_list)
+        #user_dict["statement"] = 0
+        return None
+
+    # Prüft daytime und passt die Stunde evtl. an 24h-Format an
+    # Gibt die Stunde und Minute die übergeben wird in die result_list (als String)
+
+    global rewrite_result_list
+    def rewrite_result_list(hour, minute):
+        if user_dict["daytime"] == internal_daytime_dict["vormittags"]:
+            result_list[0] = str(hour)
+            result_list[2] = str(minute)
+        else:
+            hour = hour + 12
+            result_list[0] = str(hour)
+            result_list[2] = str(minute)
+
+
+    # Errechnen Stunde und Minute und übergeben sie an rewrite_result_list
+
+    global halb
+    def halb(self):
+        hour = user_dict["input_hour"] - 1
+        minute = 30
+        rewrite_result_list(hour, minute)
+
+    global dreiviertel
+    def dreiviertel(self):
+        hour = user_dict["input_hour"] - 1
+        minute = 45
+        rewrite_result_list(hour, minute)
+
+    global vieretel
+    def viertel(self):
+        hour = user_dict["input_hour"] - 1
+        minute = 15
+        rewrite_result_list(hour, minute)
+
+    global viertelvor
+    def viertelvor(self):
+        hour = user_dict["input_hour"] - 1
+        minute = 45
+        rewrite_result_list(hour, minute)
+
+    global viertelnach
+    def viertelnach(self):
+        hour = user_dict["input_hour"]
+        minute = 15
+        rewrite_result_list(hour, minute)
+
+    global check_statement
+    def check_statement(self):
+        if user_dict["statement"] == internal_statement_dict["Halb"]:
+            print("runs statementfunc_halb()")
+            halb(self)
+        elif user_dict["statement"] == internal_statement_dict["Dreiviertel"]:
+            print("runs statementfunc_dreiviertel()")
+            dreiviertel(self)
+        elif user_dict["statement"] == internal_statement_dict["Viertel"]:
+            print("runs statementfunc_viertel()")
+            viertel(self)
+        elif user_dict["statement"] == internal_statement_dict["Viertel vor"]:
+            print("runs statementfunc_viertelvor()")
+            viertelvor(self)
+        elif user_dict["statement"] == internal_statement_dict["Viertel nach"]:
+            print("runs statementfunc_viertelnach()")
+            viertelnach(self)
+
+
+    def convert(self):
+        check_statement(self)
+        try:
+            print("".join(result_list))
+        except TypeError:
+            print("!!! Fehler in Funktion convert(), da kein String sondern ein anderer Typ weitergegeben wurde !!!")
+
+
+
+    # "statements" und "daytimes" als int codiert (bringt vermutlich eine bessere runtime als Strings)
+
+    global internal_statement_dict
+    internal_statement_dict = {"Halb": 0, "Dreiviertel": 1, "Viertel": 2, "Viertel vor": 3, "Viertel nach": 4}
+    global internal_daytime_dict
+    internal_daytime_dict = {"vormittags": 5, "nachmittags": 6}
+
+    # Das vom user später über die UI gefüllte dict wird iniziiert
+    global user_dict
+    user_dict = {"statement": 1, "input_hour": 10, "daytime": 5}
+
+    # Die später zur Ergebnisausgabe verwendete result_list wird iniziiert
+    global result_list
+    result_list = [None, ":", None]
+
+
+
+
+
+class UhrzeitenApp(App):
+
+    def build(self):
+        return MainWindow()
+
+    def converty(self):
+        print("tes")
+
+if __name__ == '__main__':
+    UhrzeitenApp().run()
