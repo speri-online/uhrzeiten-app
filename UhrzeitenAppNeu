@@ -10,97 +10,32 @@ Builder.load_file("uhrzeitenappneu.kv")
 
 
 class MainWindow(BoxLayout):
-
     btn_halb = ObjectProperty(None)
-    btn_convert: ObjectProperty(None)
+    btn_dreiviertel = ObjectProperty(None)
+    btn_viertel = ObjectProperty(None)
+    btn_viertelvor = ObjectProperty(None)
+    btn_viertelnach = ObjectProperty(None)
 
-    #Sobald und solang das user_dict mit Werten außer "None" gefüllt ist soll kontinuerlich kovertiert werden,
-    #sodass bei Neueingabe eines der drei Werte gleich aktualisiert wird.
+    btn_1 = ObjectProperty(None)
+    btn_2 = ObjectProperty(None)
+    btn_3 = ObjectProperty(None)
+    btn_4 = ObjectProperty(None)
+    btn_5 = ObjectProperty(None)
+    btn_6 = ObjectProperty(None)
+    btn_7 = ObjectProperty(None)
+    btn_8 = ObjectProperty(None)
+    btn_9 = ObjectProperty(None)
+    btn_10 = ObjectProperty(None)
+    btn_11 = ObjectProperty(None)
+    btn_12 = ObjectProperty(None)
 
+    btn_nachmittags = ObjectProperty(None)
+    btn_vormittags= ObjectProperty(None)
 
-    global rewrite_user_dict
-    def rewrite_user_dict(self,x):
-        #print(user_dict)
-        #print(result_list)
-        #user_dict["statement"] = 0
-        return None
-
-    # Prüft daytime und passt die Stunde evtl. an 24h-Format an
-    # Gibt die Stunde und Minute die übergeben wird in die result_list (als String)
-
-    global rewrite_result_list
-    def rewrite_result_list(hour, minute):
-        if user_dict["daytime"] == internal_daytime_dict["vormittags"]:
-            result_list[0] = str(hour)
-            result_list[2] = str(minute)
-        else:
-            hour = hour + 12
-            result_list[0] = str(hour)
-            result_list[2] = str(minute)
-
-
-    # Errechnen Stunde und Minute und übergeben sie an rewrite_result_list
-
-    global halb
-    def halb(self):
-        hour = user_dict["input_hour"] - 1
-        minute = 30
-        rewrite_result_list(hour, minute)
-
-    global dreiviertel
-    def dreiviertel(self):
-        hour = user_dict["input_hour"] - 1
-        minute = 45
-        rewrite_result_list(hour, minute)
-
-    global vieretel
-    def viertel(self):
-        hour = user_dict["input_hour"] - 1
-        minute = 15
-        rewrite_result_list(hour, minute)
-
-    global viertelvor
-    def viertelvor(self):
-        hour = user_dict["input_hour"] - 1
-        minute = 45
-        rewrite_result_list(hour, minute)
-
-    global viertelnach
-    def viertelnach(self):
-        hour = user_dict["input_hour"]
-        minute = 15
-        rewrite_result_list(hour, minute)
-
-    global check_statement
-    def check_statement(self):
-        if user_dict["statement"] == internal_statement_dict["Halb"]:
-            print("runs statementfunc_halb()")
-            halb(self)
-        elif user_dict["statement"] == internal_statement_dict["Dreiviertel"]:
-            print("runs statementfunc_dreiviertel()")
-            dreiviertel(self)
-        elif user_dict["statement"] == internal_statement_dict["Viertel"]:
-            print("runs statementfunc_viertel()")
-            viertel(self)
-        elif user_dict["statement"] == internal_statement_dict["Viertel vor"]:
-            print("runs statementfunc_viertelvor()")
-            viertelvor(self)
-        elif user_dict["statement"] == internal_statement_dict["Viertel nach"]:
-            print("runs statementfunc_viertelnach()")
-            viertelnach(self)
-
-
-    def convert(self):
-        check_statement(self)
-        try:
-            print("".join(result_list))
-        except TypeError:
-            print("!!! Fehler in Funktion convert(), da kein String sondern ein anderer Typ weitergegeben wurde !!!")
-
+    result_label = ObjectProperty(None)
 
 
     # "statements" und "daytimes" als int codiert (bringt vermutlich eine bessere runtime als Strings)
-
     global internal_statement_dict
     internal_statement_dict = {"Halb": 0, "Dreiviertel": 1, "Viertel": 2, "Viertel vor": 3, "Viertel nach": 4}
     global internal_daytime_dict
@@ -108,12 +43,72 @@ class MainWindow(BoxLayout):
 
     # Das vom user später über die UI gefüllte dict wird iniziiert
     global user_dict
-    user_dict = {"statement": 1, "input_hour": 10, "daytime": 5}
+    user_dict = {"statement": None, "input_hour": 1, "daytime": 5}
 
     # Die später zur Ergebnisausgabe verwendete result_list wird iniziiert
     global result_list
     result_list = [None, ":", None]
 
+    def go(self):
+        # Wenn user_dict komplett gefüllt is werden die Regeln der Statements angewendet, ansonsten wird nur die unveränderte Stunde aus user_dict wiedergegeben
+        if user_dict["statement"] != None and user_dict["input_hour"] != None and user_dict["daytime"] != None:
+            if user_dict["statement"] == internal_statement_dict["Halb"]:
+                print("runs statementfunc_halb()")
+                hour = user_dict["input_hour"] - 1
+                minute = 30
+
+            elif user_dict["statement"] == internal_statement_dict["Dreiviertel"]:
+                print("runs statementfunc_dreiviertel()")
+                hour = user_dict["input_hour"] - 1
+                minute = 45
+
+            elif user_dict["statement"] == internal_statement_dict["Viertel"]:
+                print("runs statementfunc_viertel()")
+                hour = user_dict["input_hour"] - 1
+                minute = 15
+
+            elif user_dict["statement"] == internal_statement_dict["Viertel vor"]:
+                print("runs statementfunc_viertelvor()")
+                hour = user_dict["input_hour"] - 1
+                minute = 45
+
+            elif user_dict["statement"] == internal_statement_dict["Viertel nach"]:
+                print("runs statementfunc_viertelnach()")
+                hour = user_dict["input_hour"]
+                minute = 15
+
+        else:
+            hour = user_dict["input_hour"]
+            minute = "00"
+
+        # Prüft daytime und passt die Stunde evtl. an 24h-Format an
+        # Gibt die Stunde und Minute die übergeben wird in die result_list (als String)
+        if user_dict["daytime"] == internal_daytime_dict["vormittags"]:
+            result_list[0] = str(hour)
+            result_list[2] = str(minute)
+            result = "".join(result_list)
+            self.result_label.text = result
+            print(result)
+        else:
+            hour = hour + 12
+            result_list[0] = str(hour)
+            result_list[2] = str(minute)
+            result = "".join(result_list)
+            self.result_label.text = result
+            print(result)
+
+
+    def rewrite_user_dict_statement(self,x):
+        user_dict["statement"] = x
+        print("user_dict statement set on: ",user_dict["statement"])
+
+    def rewrite_user_dict_input_hour(self,x):
+        user_dict["input_hour"] = x
+        print("user_dict input_hour set on: ", user_dict["input_hour"])
+
+    def rewrite_user_dict_input_daytime(self,x):
+        user_dict["daytime"] = x
+        print("user_dict daytime set on: ", user_dict["daytime"])
 
 
 
@@ -123,8 +118,6 @@ class UhrzeitenApp(App):
     def build(self):
         return MainWindow()
 
-    def converty(self):
-        print("tes")
 
 if __name__ == '__main__':
     UhrzeitenApp().run()
